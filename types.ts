@@ -5,6 +5,7 @@ export interface UserCriteria {
   targetProblems: string;
   intendedService: string;
   leadScoreThreshold: number;
+  businessStage: string;
 }
 
 export interface LeadReport {
@@ -35,4 +36,11 @@ export interface LeadReport {
     emailVersion: string;
   };
   sources?: { web: { uri: string; title: string } }[];
+}
+
+export interface HistoryEntry {
+  id: string;
+  timestamp: string;
+  criteria: UserCriteria;
+  reports: LeadReport[];
 }

@@ -14,6 +14,7 @@ export const CriteriaForm: React.FC<CriteriaFormProps> = ({ onSubmit }) => {
     targetProblems: 'low foot traffic on weekdays, inconsistent social media presence, poor local SEO ranking',
     intendedService: 'Local SEO optimization and Social Media Management package',
     leadScoreThreshold: 7,
+    businessStage: 'All Stages',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -45,6 +46,27 @@ export const CriteriaForm: React.FC<CriteriaFormProps> = ({ onSubmit }) => {
             <input type="text" name="location" id="location" value={criteria.location} onChange={handleChange}
               className="w-full bg-brand-primary border border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-accent focus:outline-none"
               placeholder="যেমন, ঢাকা, বাংলাদেশ" required />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-brand-text-secondary mb-2">ব্যবসার পর্যায়</label>
+          <div className="bg-brand-primary p-2 rounded-lg border border-gray-600 flex flex-wrap gap-2">
+              <label className={`flex-1 text-center cursor-pointer px-4 py-2 rounded-md text-sm transition-colors ${criteria.businessStage === 'All Stages' ? 'bg-brand-accent text-white font-semibold' : 'hover:bg-gray-700/50'}`}>
+                  <input type="radio" name="businessStage" value="All Stages" checked={criteria.businessStage === 'All Stages'} onChange={handleChange} className="sr-only" />
+                  সব পর্যায়
+              </label>
+              <label className={`flex-1 text-center cursor-pointer px-4 py-2 rounded-md text-sm transition-colors ${criteria.businessStage === 'Startup' ? 'bg-brand-accent text-white font-semibold' : 'hover:bg-gray-700/50'}`}>
+                  <input type="radio" name="businessStage" value="Startup" checked={criteria.businessStage === 'Startup'} onChange={handleChange} className="sr-only" />
+                  স্টার্টআপ
+              </label>
+              <label className={`flex-1 text-center cursor-pointer px-4 py-2 rounded-md text-sm transition-colors ${criteria.businessStage === 'Growing' ? 'bg-brand-accent text-white font-semibold' : 'hover:bg-gray-700/50'}`}>
+                  <input type="radio" name="businessStage" value="Growing" checked={criteria.businessStage === 'Growing'} onChange={handleChange} className="sr-only" />
+                  ক্রমবর্ধমান
+              </label>
+              <label className={`flex-1 text-center cursor-pointer px-4 py-2 rounded-md text-sm transition-colors ${criteria.businessStage === 'Established' ? 'bg-brand-accent text-white font-semibold' : 'hover:bg-gray-700/50'}`}>
+                  <input type="radio" name="businessStage" value="Established" checked={criteria.businessStage === 'Established'} onChange={handleChange} className="sr-only" />
+                  প্রতিষ্ঠিত
+              </label>
           </div>
         </div>
         <div>

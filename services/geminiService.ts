@@ -64,27 +64,30 @@ export async function generateLeadReport(criteria: UserCriteria): Promise<LeadRe
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   const prompt = `
-You are the "Automatic Lead Agent," a professional autonomous business intelligence AI. Your task is to generate a detailed analysis for TEN (10) high-quality business leads based on user criteria.
+You are the "Automatic Lead Agent," a professional autonomous business intelligence AI. Your task is to generate a detailed analysis for TEN (10) high-quality, recently-active business leads based on user criteria.
 
 **CRITICAL INSTRUCTION: The entire output, for every field in the JSON schema, MUST be written in BENGALI (Bangla language), except for URLs and the specific string 'Data Not Available'.**
 
 **USER CRITERIA:**
 - **Niche:** ${criteria.niche}
 - **Location:** ${criteria.location}
+- **Business Stage to Target:** ${criteria.businessStage}
 - **Target Problems to Solve:** ${criteria.targetProblems}
 - **Your Intended Service to Offer:** ${criteria.intendedService}
 - **Minimum Lead Score Threshold:** ${criteria.leadScoreThreshold}/10
 
 **YOUR WORKFLOW FOR EACH OF THE 10 LEADS:**
-1.  **Lead Discovery:** Find an active business matching the criteria using Google Search. **You MUST find their official Facebook Page URL.**
-2.  **Qualification & Scoring:** Score the lead (must be >= ${criteria.leadScoreThreshold}/10).
-3.  **Digital Audit:** Analyze their website, Facebook page, other social media, branding, content, etc.
-4.  **Problem & Opportunity Identification:** List specific, actionable problems and clear growth opportunities.
-5.  **Outreach Script Generation:** Based on the research summary and identified problems, create a professional and concise direct message (DM). The message should briefly mention a specific issue you found and connect it to your proposed service. Also, create a more detailed professional email.
-6.  **Report Generation:** Create a structured report object for the lead. All text must be in Bengali. The 'facebookLink' field is mandatory.
+1.  **Lead Discovery:** Find a potential business matching the criteria using Google Search. It must match the target business stage: '${criteria.businessStage}'. If the user specified 'All Stages', you can consider any business stage.
+2.  **Activity Verification (MANDATORY):** Before proceeding, you MUST verify the business has been active online within the last 10 days. Check their Facebook page for recent posts, stories, or user engagement. **If there is no activity in the last 10 days, DISCARD this lead and find a new one. This is a non-negotiable step.**
+3.  **Facebook Page Validation (MANDATORY):** You MUST find their official, active, and publicly accessible Facebook Business Page URL. The link must be correct and working. Avoid personal profiles, groups, or inactive/unofficial pages. If a valid, active page cannot be confirmed, DISCARD the lead.
+4.  **Qualification & Scoring:** Only after verifying activity and the Facebook page, score the lead based on their match to user criteria. The score must be >= ${criteria.leadScoreThreshold}/10. Inactive businesses must not be scored or included.
+5.  **Digital Audit:** Analyze their validated, active website and Facebook page, other social media, branding, content, etc.
+6.  **Problem & Opportunity Identification:** List specific, actionable problems and clear growth opportunities.
+7.  **Outreach Script Generation:** Based on the research, create a professional and concise direct message (DM) and a more detailed professional email.
+8.  **Report Generation:** Create a structured report object for the qualified, active lead.
 
 **FINAL OUTPUT:**
-You must return a JSON array containing exactly TEN (10) report objects. Each object must strictly follow the provided schema. Every string value must be in Bengali.
+You must return a JSON array containing exactly TEN (10) report objects for recently active businesses with valid Facebook Pages. Each object must strictly follow the provided schema. Every string value must be in Bengali.
 
 Begin your analysis.
 `;
