@@ -49,7 +49,7 @@ const reportObjectSchema = {
 
 const finalSchema = {
     type: Type.ARRAY,
-    description: "দশটি লিড রিপোর্টের একটি তালিকা।",
+    description: "পাঁচটি লিড রিপোর্টের একটি তালিকা।",
     items: reportObjectSchema,
 };
 
@@ -64,7 +64,7 @@ export async function generateLeadReport(criteria: UserCriteria): Promise<LeadRe
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   const prompt = `
-You are the "Automatic Lead Agent," a professional autonomous business intelligence AI. Your task is to generate a detailed analysis for TEN (10) high-quality, recently-active business leads based on user criteria.
+You are the "Automatic Lead Agent," a professional autonomous business intelligence AI. Your task is to generate a detailed analysis for FIVE (5) high-quality, recently-active business leads based on user criteria.
 
 **CRITICAL INSTRUCTION: The entire output, for every field in the JSON schema, MUST be written in BENGALI (Bangla language), except for URLs and the specific string 'Data Not Available'.**
 
@@ -76,18 +76,26 @@ You are the "Automatic Lead Agent," a professional autonomous business intellige
 - **Your Intended Service to Offer:** ${criteria.intendedService}
 - **Minimum Lead Score Threshold:** ${criteria.leadScoreThreshold}/10
 
-**YOUR WORKFLOW FOR EACH OF THE 10 LEADS:**
+**YOUR WORKFLOW FOR EACH OF THE 5 LEADS:**
 1.  **Lead Discovery:** Find a potential business matching the criteria using Google Search. It must match the target business stage: '${criteria.businessStage}'. If the user specified 'All Stages', you can consider any business stage.
 2.  **Activity Verification (MANDATORY):** Before proceeding, you MUST verify the business has been active online within the last 10 days. Check their Facebook page for recent posts, stories, or user engagement. **If there is no activity in the last 10 days, DISCARD this lead and find a new one. This is a non-negotiable step.**
-3.  **Facebook Page Validation (MANDATORY):** You MUST find their official, active, and publicly accessible Facebook Business Page URL. The link must be correct and working. Avoid personal profiles, groups, or inactive/unofficial pages. If a valid, active page cannot be confirmed, DISCARD the lead.
-4.  **Qualification & Scoring:** Only after verifying activity and the Facebook page, score the lead based on their match to user criteria. The score must be >= ${criteria.leadScoreThreshold}/10. Inactive businesses must not be scored or included.
+3.  **CRITICAL FACEBOOK PAGE VALIDATION (MANDATORY - NO EXCEPTIONS):**
+    *   **Objective:** Find the single, official, publicly accessible Facebook **Business Page** for the lead.
+    *   **URL Verification:** The URL must be correct, working, and lead directly to the business's official page.
+    *   **STRICTLY FORBIDDEN LINKS:**
+        *   **NO Facebook Groups:** Any URL containing "/groups/" is invalid.
+        *   **NO Personal Profiles:** Any URL for a personal user account is invalid.
+        *   **NO Generic Search Pages:** The link must be to the specific business page, not a Facebook search result.
+    *   **Name & Content Matching:** The name and content on the Facebook page must clearly and logically match the business name you identified.
+    *   **Final Rule:** If you cannot find and verify a correct, working, official Facebook **Business Page** URL that meets all the above criteria, you **MUST DISCARD THE LEAD** and find a new one. Do not provide a group link, a wrong link, or use 'Data Not Available' as a substitute for a failed validation. This step is crucial for the quality of the report.
+4.  **Qualification & Scoring:** Only after verifying activity and the correct Facebook Business Page, score the lead based on their match to user criteria. The score must be >= ${criteria.leadScoreThreshold}/10. Inactive or unverified businesses must not be scored or included.
 5.  **Digital Audit:** Analyze their validated, active website and Facebook page, other social media, branding, content, etc.
 6.  **Problem & Opportunity Identification:** List specific, actionable problems and clear growth opportunities.
 7.  **Outreach Script Generation:** Based on the research, create a professional and concise direct message (DM) and a more detailed professional email.
 8.  **Report Generation:** Create a structured report object for the qualified, active lead.
 
 **FINAL OUTPUT:**
-You must return a JSON array containing exactly TEN (10) report objects for recently active businesses with valid Facebook Pages. Each object must strictly follow the provided schema. Every string value must be in Bengali.
+You must return a JSON array containing exactly FIVE (5) report objects for recently active businesses with valid, verified Facebook Business Pages. Each object must strictly follow the provided schema. Every string value must be in Bengali.
 
 Begin your analysis.
 `;
